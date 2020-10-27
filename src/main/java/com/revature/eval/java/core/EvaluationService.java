@@ -3,7 +3,7 @@ package com.revature.eval.java.core;
 import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Map;
-
+import java.util.regex.*;
 public class EvaluationService {
 
 	/**
@@ -30,8 +30,13 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String[] parsedPhraseArray = phrase.split(" ");
+		String acronym = "";
+		for (String word : parsedPhraseArray) {
+			acronym += word.charAt(0);
+			
+		}
+		return acronym;
 	}
 
 	/**
@@ -84,18 +89,21 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (getSideOne() == getSideTwo() && getSideOne() == getSideThree())
+				return true;
+			else return false;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (getSideOne() == getSideTwo() || getSideOne()== getSideThree() || getSideTwo() == getSideThree() )
+				return true;
+			else return false;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (!isIsosceles() && !isEquilateral() )
+				return true;
+		    else return false;
 		}
 
 	}
@@ -116,9 +124,60 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		
+		int score = 0;
+		String upperString = string.toUpperCase(); 
+		for(int i = 0; i < upperString.length(); i++) {
+			switch(upperString.charAt(i)) {
+			
+			case 'A':
+			case 'E':
+			case 'I':
+			case 'O':
+			case 'U':
+			case 'L':
+			case 'N':
+			case 'R':
+			case 'S':
+			case 'T':
+				score += 1;
+				break;
+			case 'D':
+			case 'G':
+				score += 2;
+			case 'B':
+			case 'C':
+			case 'M':
+			case 'P':
+				score +=3;
+				break;
+			case 'F':
+			case 'H':
+			case 'V':
+			case 'W':
+			case 'Y':
+				score += 4;
+				break;
+			case 'K':
+				score += 5;
+				break;
+			case 'J':
+			case 'X':
+				score += 8;
+				break;
+			case 'Q':
+			case 'Z':
+				score += 10;
+				break;
+			
+			}
+			
+			
+		}
+		return score;
 	}
+	
+	
 
 	/**
 	 * 5. Clean up user-entered phone numbers so that they can be sent SMS messages.
@@ -246,8 +305,26 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String[] words = string.split(" ");
+		String translation = "";
+		StringBuilder translationBuilder = new StringBuilder("");
+		for(String word: words) {
+			String firstLetter = word.substring(0, 1);
+			if (firstLetter.matches("[aeiouAEIOU]")) {
+				translationBuilder.append(word);
+				translationBuilder.append("ay");
+				translationBuilder.append(" ");
+			}
+			String rootWord = word.substring(1, word.length());
+			translationBuilder.append(rootWord);
+			translationBuilder.append(firstLetter);
+			translationBuilder.append("ay");
+			translationBuilder.append(" ");
+		}
+		translation= translationBuilder.toString();
+
+		return translation.trim();
+
 	}
 
 	/**
@@ -266,8 +343,20 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		int num = input;
+		int sum = 0;
+		int numOfDigits = 0;
+		while (num > 0) {
+			num /= 10;
+			numOfDigits++;
+		}
+		num = input;
+		while (num > 0) {
+			sum += Math.pow(num%10, numOfDigits);
+			num /= 10;
+			
+		}
+		return (sum == input);
 	}
 
 	/**
