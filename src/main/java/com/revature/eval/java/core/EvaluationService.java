@@ -1,6 +1,10 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.*;
@@ -30,8 +34,15 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		String[] parsedPhraseArray = phrase.split(" ");
 		String acronym = "";
+		if (phrase.contains("-")) {
+			String[] parsedPhraseArray = phrase.split("-");
+			for (String word : parsedPhraseArray) {
+				acronym += word.charAt(0);
+			}
+			return acronym;
+		}
+		String[] parsedPhraseArray = phrase.split(" ");
 		for (String word : parsedPhraseArray) {
 			acronym += word.charAt(0);
 			
@@ -211,8 +222,19 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		string = string.replaceAll("[^0-9+]", "");
+		if (string.charAt(0) == '1') {
+			string = string.substring(1,string.length()-1);
+			if (string.length() != 10) {
+				throw new IllegalArgumentException();
+			}
+			return string;
+		}else {
+			if (string.length() != 10) {
+				throw new IllegalArgumentException();
+			}
+			return string;
+		}
 	}
 
 	/**
@@ -225,8 +247,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		
+		LinkedHashMap<String, Integer> wordMap = new LinkedHashMap<String, Integer>();
+		string = string.replaceAll("\\n", "");
+		String[] words = {};
+		if (string.contains(","))
+			words = string.split(",");
+		if (string.contains(" "))
+		 	words = string.split(" ");
+		
+			
+		
+		for (String word : words) {
+			if (wordMap.containsKey(word)){
+				wordMap.put(word, wordMap.get(word)+1);
+			}
+			else {
+				wordMap.put(word, 1);
+				
+			}
+		}
+		
+		return wordMap;
 	}
 
 	/**
@@ -308,18 +350,39 @@ public class EvaluationService {
 		String[] words = string.split(" ");
 		String translation = "";
 		StringBuilder translationBuilder = new StringBuilder("");
-		for(String word: words) {
+		for(String word : words) {
 			String firstLetter = word.substring(0, 1);
+			String specialcase1Letters = word.substring(0,2);
+			String specialcase2Letters = word.substring(0,3); 
 			if (firstLetter.matches("[aeiouAEIOU]")) {
 				translationBuilder.append(word);
 				translationBuilder.append("ay");
 				translationBuilder.append(" ");
 			}
-			String rootWord = word.substring(1, word.length());
-			translationBuilder.append(rootWord);
-			translationBuilder.append(firstLetter);
-			translationBuilder.append("ay");
-			translationBuilder.append(" ");
+			if(specialcase1Letters.matches("[sctq][hu]")){
+				String rootWord = word.substring(2, word.length());
+				translationBuilder.append(rootWord);
+				translationBuilder.append(specialcase1Letters);
+				translationBuilder.append("ay");
+				translationBuilder.append(" ");
+			}
+				
+			if(specialcase2Letters.matches("sch")){
+				String rootWord = word.substring(3, word.length());
+				translationBuilder.append(rootWord);
+				translationBuilder.append(specialcase2Letters);
+				translationBuilder.append("ay");
+				translationBuilder.append(" ");
+			}
+			else {
+				String rootWord = word.substring(1, word.length());
+				translationBuilder.append(rootWord);
+				translationBuilder.append(firstLetter);
+				translationBuilder.append("ay");
+				translationBuilder.append(" ");
+				
+			}
+			
 		}
 		translation= translationBuilder.toString();
 
@@ -370,9 +433,33 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
-	}
+		
+		List<Long> factors = new ArrayList<Long>();
+	 
+				if (l%2==0) 
+				{ 
+					factors.add(2L);
+					return factors;
+				} 
+ 
+				for (int i = 3; i <= Math.sqrt(l); i+= 2) 
+				{ 
+					while (l%i == 0) 
+					{ 
+						factors.add((long)i);
+						l /= i; 
+					} 
+				} 
+
+				 
+				if (l > 2) 
+					factors.add(l); 
+				return factors;
+
+			}
+
+
+	
 
 	/**
 	 * 11. Create an implementation of the rotational cipher, also sometimes called
@@ -428,6 +515,13 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
+		int count = 0;
+		int num = 0;
+		num = num + 1;
+		while(count < i) {
+			
+	
+		}
 		// TODO Write an implementation for this method declaration
 		return 0;
 	}
@@ -522,9 +616,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		if (string == null) {
+			return false;
+		}
+		Boolean [] alphabetMarker = new Boolean[26];
+		Arrays.fill(alphabetMarker, false);
+		int alphaIndex = 0;
+		string = string.toUpperCase();
+		for (int i = 0; i < string.length(); i++) {
+			if('A' <= string.charAt(i) && string.charAt(i) <= 'Z') {
+				alphaIndex = string.charAt(i) - 'A';
+	            alphabetMarker[alphaIndex] = true;
+	        }
+	    }
+	    for (boolean index : alphabetMarker) {
+	        if (!index) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
+
+	
 
 	/**
 	 * 17. Calculate the moment when someone has lived for 10^9 seconds.
@@ -553,8 +666,15 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int sum = 0;
+		for(int currentNum = 1; currentNum < i; currentNum++) {
+			for (int factor : set) {
+				if (currentNum % factor == 0) {
+					sum += currentNum;
+				}
+			}
+		}
+		return sum;
 	}
 
 	/**
