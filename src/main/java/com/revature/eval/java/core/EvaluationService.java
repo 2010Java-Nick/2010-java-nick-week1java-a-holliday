@@ -382,7 +382,7 @@ public class EvaluationService {
 				translationBuilder.append("ay");
 				translationBuilder.append(" ");
 			}
-			if(specialcase1Letters.matches("[sctq][hu]")){
+			else if(specialcase1Letters.matches("sh|ch|th|qu")){
 				String rootWord = word.substring(2, word.length());
 				translationBuilder.append(rootWord);
 				translationBuilder.append(specialcase1Letters);
@@ -390,7 +390,7 @@ public class EvaluationService {
 				translationBuilder.append(" ");
 			}
 				
-			if(specialcase2Letters.matches("sch")){
+			else if(specialcase2Letters.matches("sch")){
 				String rootWord = word.substring(3, word.length());
 				translationBuilder.append(rootWord);
 				translationBuilder.append(specialcase2Letters);
