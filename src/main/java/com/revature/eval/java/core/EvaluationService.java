@@ -1,12 +1,18 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.*;
 public class EvaluationService {
 
@@ -35,19 +41,19 @@ public class EvaluationService {
 	 */
 	public String acronym(String phrase) {
 		String acronym = "";
-		if (phrase.contains("-")) {
+		/*if (phrase.contains("-")) {
 			String[] parsedPhraseArray = phrase.split("-");
 			for (String word : parsedPhraseArray) {
 				acronym += word.charAt(0);
 			}
 			return acronym;
-		}
-		String[] parsedPhraseArray = phrase.split(" ");
+		}*/
+		String[] parsedPhraseArray = phrase.split("[\\s-]");
 		for (String word : parsedPhraseArray) {
 			acronym += word.charAt(0);
 			
 		}
-		return acronym;
+		return acronym.toUpperCase();
 	}
 
 	/**
@@ -250,11 +256,12 @@ public class EvaluationService {
 		
 		LinkedHashMap<String, Integer> wordMap = new LinkedHashMap<String, Integer>();
 		string = string.replaceAll("\\n", "");
-		String[] words = {};
+		String[] words = new String[1];
 		if (string.contains(","))
 			words = string.split(",");
 		if (string.contains(" "))
 		 	words = string.split(" ");
+		else {words[0] = string;}
 		
 			
 		
@@ -306,14 +313,30 @@ public class EvaluationService {
 	 * binary search is a dichotomic divide and conquer search algorithm.
 	 * 
 	 */
-	static class BinarySearch<T> {
+	static class BinarySearch<T extends Comparable<T>> {
 		private List<T> sortedList;
 
-		public int indexOf(T t) {
+		public int indexOf(T t ) {
+			
+		List<T> tempList = sortedList;
+			while (tempList.size() >= 1 ) {
+			if (t.compareTo(tempList.get(tempList.size()/2))== 0) {
+				return(tempList.size()/2);
+			}
+			if(t.compareTo(tempList.get(tempList.size()/2 )) > 1) {
+				tempList = tempList.subList(tempList.size()/2, tempList.size());
+				System.out.println("Item is bigger");
+			}
+			//if(t.compareTo(tempList.get(tempList.size()/2 )) < 0) 
+			else{
+				tempList = tempList.subList(0, tempList.size()/2);
+			
+				}
+			}
 			// TODO Write an implementation for this method declaration
-			return 0;
+			return -1;
 		}
-
+		
 		public BinarySearch(List<T> sortedList) {
 			super();
 			this.sortedList = sortedList;
@@ -455,7 +478,7 @@ public class EvaluationService {
 				if (l > 2) 
 					factors.add(l); 
 				return factors;
-
+				
 			}
 
 
@@ -496,8 +519,22 @@ public class EvaluationService {
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String shiftedString = "";
+		    int len = string.length();
+		    for(int i = 0; i < len; i++){
+		        char letter = (string.charAt(i));
+		        if (!Character.isLetter(letter)) {
+		        	shiftedString += letter;
+		        }
+		        else if ( Character.isLowerCase(letter) && letter +key > 'z'
+		         || Character.isUpperCase(letter) && letter + key > 'Z') 
+		        {
+		            shiftedString += (char)(string.charAt(i) - (26-key));
+		        }
+		        else
+		            shiftedString += (char)(string.charAt(i) + key);
+		    	}
+		    return shiftedString;
 		}
 
 	}
@@ -515,16 +552,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
-		int count = 0;
-		int num = 0;
-		num = num + 1;
-		while(count < i) {
-			
+		int num, count, j;
+	    num=1;
+	    count=0;
+	    
+	    if (i == 0) {
+	    	throw new IllegalArgumentException();
+	    }
+	 
+	    while (count <= i){
+	      num++;
+	      for (j = 2; j <= num; j++){ //Here we will loop from 2 to num
+	        if (num % j == 0) {
+	          break;
+	        }
+	      }
+	      if ( j == num){//if it is a prime number
+	        count = count+1;
+	      }
+	    }
+	    return count;
+	  }
 	
-		}
-		// TODO Write an implementation for this method declaration
-		return 0;
-	}
 
 	/**
 	 * 13 & 14. Create an implementation of the atbash cipher, an ancient encryption
@@ -537,7 +586,7 @@ public class EvaluationService {
 	 * 
 	 * An Atbash cipher for the Latin alphabet would be as follows:
 	 * 
-	 * Plain: abcdefghijklmnopqrstuvwxyz Cipher: zyxwvutsrqponmlkjihgfedcba It is a
+	 * Plain: abcdefghijklmnopqrstuvwxyz Cipher: abcdefghijklmnopqrstuvwxyz It is a
 	 * very weak cipher because it only has one possible key, and it is a simple
 	 * monoalphabetic substitution cipher. However, this may not have been an issue
 	 * in the cipher's time.
@@ -558,9 +607,32 @@ public class EvaluationService {
 		 * @param string
 		 * @return
 		 */
+		static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+		static String reverse = "zyxwvutsrqponmlkjihgfedcba";
+		
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String cipherString = "";
+			string = string.replaceAll("\\p{Punct}|\\s","");
+			string = string.toLowerCase();
+			for (int i = 0; i < string.length(); i++) {
+				if (Character.isLetter(string.charAt(i))) {
+					int index = alphabet.indexOf(string.charAt(i));
+					cipherString = cipherString + reverse.charAt(index);
+				}
+				else{
+					cipherString = cipherString + string.charAt(i);
+					
+				}
+				StringBuilder sb = new StringBuilder();
+				sb.append(cipherString);
+				 for (int j = 5; j <= cipherString.length(); j += 5)
+			        {
+			            sb.insert(j, " ");
+			        }
+				cipherString = sb.toString();
+			}
+			return cipherString;
+
 		}
 
 		/**
@@ -570,9 +642,25 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String decodeString = "";
+			string = string.replaceAll("\\p{Punct}|\\s","");
+			string = string.toLowerCase();
+			for (int i = 0; i < string.length(); i++) {
+				if (Character.isLetter(string.charAt(i))) {
+					int index = reverse.indexOf(string.charAt(i));
+					decodeString = decodeString + alphabet.charAt(index);
+				}
+				else{
+					decodeString = decodeString + string.charAt(i);
+					
+				}
+				
+			}
+			decodeString = decodeString.replaceAll("\\s", "");
+			return decodeString;
+	
 		}
+
 	}
 
 	/**
@@ -648,9 +736,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
-	}
+		if (given.isSupported(ChronoUnit.SECONDS)){
+		return given.plus(1_000_000_000L, ChronoUnit.SECONDS);
+		}
+		else {
+			LocalDate ldate = LocalDate.from(given);
+			LocalDateTime dt = ldate.atStartOfDay();
+			return dt.plus(1_000_000_000L, ChronoUnit.SECONDS);
+			
+		}
+		
+		}
+	
+	
 
 	/**
 	 * 18. Given a number, find the sum of all the unique multiples of particular
@@ -671,6 +769,7 @@ public class EvaluationService {
 			for (int factor : set) {
 				if (currentNum % factor == 0) {
 					sum += currentNum;
+					break;
 				}
 			}
 		}
@@ -746,7 +845,45 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
+		string = string.replaceAll("\\s", "");
+		if (string.contains("plus")){
+			int sum = 0;
+			Pattern pattern = Pattern.compile("-?\\d+");
+	        Matcher matcher = pattern.matcher(string);
+	        while(matcher.find()) {
+	            sum += Integer.parseInt(matcher.group());
+	        }
+	        return sum;
+		}
+		if (string.contains("minus")) {
+			List<Integer> operands = new ArrayList<Integer>();
+			Pattern pattern = Pattern.compile("-?\\d+");
+	        Matcher matcher = pattern.matcher(string);
+	        while(matcher.find()) {
+	             operands.add( Integer.parseInt(matcher.group()));
+	        }
+			return operands.get(0) - operands.get(1);
+			
+		}
+		if (string.contains("multipliedby")){
+			int product = 1;
+			Pattern pattern = Pattern.compile("-?\\d+");
+	        Matcher matcher = pattern.matcher(string);
+	        while(matcher.find()) {
+	            product *= Integer.parseInt(matcher.group());
+	        }
+			return product;
+		}
+		if (string.contains("dividedby")){
+			List<Integer> operands = new ArrayList<Integer>();
+			Pattern pattern = Pattern.compile("-?\\d+");
+	        Matcher matcher = pattern.matcher(string);
+	        while(matcher.find()) {
+	             operands.add( Integer.parseInt(matcher.group()));
+	        }
+			return operands.get(0) / operands.get(1);
+		}
+		
 		return 0;
 	}
 
