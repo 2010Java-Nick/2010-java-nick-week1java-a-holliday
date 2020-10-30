@@ -560,7 +560,7 @@ public class EvaluationService {
 	    	throw new IllegalArgumentException();
 	    }
 	 
-	    while (count <= i){
+	    while (count < i){
 	      num++;
 	      for (j = 2; j <= num; j++){ //Here we will loop from 2 to num
 	        if (num % j == 0) {
@@ -571,7 +571,7 @@ public class EvaluationService {
 	        count = count+1;
 	      }
 	    }
-	    return count;
+	    return num;
 	  }
 	
 
@@ -623,14 +623,15 @@ public class EvaluationService {
 					cipherString = cipherString + string.charAt(i);
 					
 				}
+			}
 				StringBuilder sb = new StringBuilder();
 				sb.append(cipherString);
-				 for (int j = 5; j <= cipherString.length(); j += 5)
+				 for (int j = 5; j <= cipherString.length(); j += 6)
 			        {
 			            sb.insert(j, " ");
 			        }
-				cipherString = sb.toString();
-			}
+			cipherString = sb.toString();
+		
 			return cipherString;
 
 		}
