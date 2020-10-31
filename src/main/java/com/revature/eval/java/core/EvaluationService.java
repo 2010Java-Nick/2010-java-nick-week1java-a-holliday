@@ -259,7 +259,7 @@ public class EvaluationService {
 		String[] words = new String[1];
 		if (string.contains(","))
 			words = string.split(",");
-		if (string.contains(" "))
+		else if (string.contains(" "))
 		 	words = string.split(" ");
 		else {words[0] = string;}
 		
@@ -318,22 +318,25 @@ public class EvaluationService {
 
 		public int indexOf(T t ) {
 			
-		List<T> tempList = sortedList;
-			while (tempList.size() >= 1 ) {
-			if (t.compareTo(tempList.get(tempList.size()/2))== 0) {
-				return(tempList.size()/2);
-			}
-			if(t.compareTo(tempList.get(tempList.size()/2 )) > 1) {
-				tempList = tempList.subList(tempList.size()/2, tempList.size());
-				System.out.println("Item is bigger");
-			}
-			//if(t.compareTo(tempList.get(tempList.size()/2 )) < 0) 
-			else{
-				tempList = tempList.subList(0, tempList.size()/2);
+		//List<T> tempList = sortedList;
+			int first = 0;
+			int last = sortedList.size()-1;
 			
+			while(first <= last) {
+				int mid = (int) Math.floor((first + last) / 2);
+				if (t.compareTo(sortedList.get(mid))== 0) {
+					return sortedList.indexOf(t);
+				}
+				else if (t.compareTo(sortedList.get(mid))>0) {
+					first = mid +1;
+				}
+				
+				else {
+					last = mid -1;
 				}
 			}
-			// TODO Write an implementation for this method declaration
+			
+			
 			return -1;
 		}
 		
@@ -814,9 +817,30 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		int numDigits = string.length();
+		if (numDigits <= 1) {
+			return false;
+		}
+		 
+	    int sum = 0;
+	    boolean isSecond = false;
+	    for (int i = numDigits - 1; i >= 0; i--) 
+	    {
+	 
+	        int d = string.charAt(i) - '0';
+	 
+	        if (isSecond == true)
+	            d = d * 2;
+	 
+	        sum += d / 10;
+	        sum += d % 10;
+	 
+	        isSecond = !isSecond;
+	    }
+	    return (sum % 10 == 0);
 	}
+	
 
 	/**
 	 * 20. Parse and evaluate simple math word problems returning the answer as an
